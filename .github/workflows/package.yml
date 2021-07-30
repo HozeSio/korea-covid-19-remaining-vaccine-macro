@@ -28,50 +28,50 @@ jobs:
     - name: Lint via prospector
       run: python -m prospector
 
-  Windows-Build:
-    runs-on: windows-latest
-    needs: lint
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.9]
+#   Windows-Build:
+#     runs-on: windows-latest
+#     needs: lint
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         python-version: [3.9]
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Cache
-      uses: actions/cache@v2
-      with:
-        # A list of files, directories, and wildcard patterns to cache and restore
-        path: |
-          ~\AppData\Local\pip\Cache
-          ~\AppData\Local\Nuitka\Nuitka
-          vaccine-run-kakao.build
-          vaccine-run-kakao.dist
-          vaccine-run-kakao.onefile-build
-        # An explicit key for restoring and saving the cache
-        key: ${{ runner.os }}-cache-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-cache-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Cache
+#       uses: actions/cache@v2
+#       with:
+#         # A list of files, directories, and wildcard patterns to cache and restore
+#         path: |
+#           ~\AppData\Local\pip\Cache
+#           ~\AppData\Local\Nuitka\Nuitka
+#           vaccine-run-kakao.build
+#           vaccine-run-kakao.dist
+#           vaccine-run-kakao.onefile-build
+#         # An explicit key for restoring and saving the cache
+#         key: ${{ runner.os }}-cache-${{ hashFiles('requirements.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-cache-
+#     - name: Set up Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pytest wheel
-        python -m pip install -r requirements.txt
-        python -m pip install nuitka zstandard
+#     - name: Install dependencies
+#       run: |
+#         python -m pip install --upgrade pip
+#         python -m pip install pytest wheel
+#         python -m pip install -r requirements.txt
+#         python -m pip install nuitka zstandard
 
-    - name: Make OneFile
-      run: |
-        nuitka --assume-yes-for-downloads --show-scons --no-progress --include-data-file="./*.mp3=./" --onefile -o vaccine-run-kakao.exe vaccine-run-kakao.py
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-          name: Windows-Binary
-          path: vaccine-run-kakao.exe
+#     - name: Make OneFile
+#       run: |
+#         nuitka --assume-yes-for-downloads --show-scons --no-progress --include-data-file="./*.mp3=./" --onefile -o vaccine-run-kakao.exe vaccine-run-kakao.py
+#     - name: Upload artifact
+#       uses: actions/upload-artifact@v2
+#       with:
+#           name: Windows-Binary
+#           path: vaccine-run-kakao.exe
 
 
   MacOS-Build:
@@ -109,7 +109,7 @@ jobs:
     name: Release
     permissions:
       contents: write
-    needs: [Windows-Build, MacOS-Build]
+    needs: MacOS-Build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
 
@@ -121,7 +121,7 @@ jobs:
 
     - name: Rename file name for release
       run: |
-        mv artifacts/Windows-Binary/vaccine-run-kakao.exe artifacts/vaccine-run-kakao-windows.exe
+#        mv artifacts/Windows-Binary/vaccine-run-kakao.exe artifacts/vaccine-run-kakao-windows.exe
         mv artifacts/Mac-Binary/vaccine-run-kakao.tar artifacts/vaccine-run-kakao-mac.tar
 
     - name: Release
@@ -129,5 +129,5 @@ jobs:
       with:
         body: "Released via Github Actions"
         files: |
-          artifacts/vaccine-run-kakao-windows.exe
+#          artifacts/vaccine-run-kakao-windows.exe
           artifacts/vaccine-run-kakao-mac.tar
