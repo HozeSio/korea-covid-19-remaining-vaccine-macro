@@ -121,13 +121,13 @@ jobs:
 
     - name: Rename file name for release
       run: |
-#        mv artifacts/Windows-Binary/vaccine-run-kakao.exe artifacts/vaccine-run-kakao-windows.exe
         mv artifacts/Mac-Binary/vaccine-run-kakao.tar artifacts/vaccine-run-kakao-mac.tar
+#        mv artifacts/Windows-Binary/vaccine-run-kakao.exe artifacts/vaccine-run-kakao-windows.exe
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         body: "Released via Github Actions"
         files: |
-#          artifacts/vaccine-run-kakao-windows.exe
           artifacts/vaccine-run-kakao-mac.tar
+#          artifacts/vaccine-run-kakao-windows.exe
